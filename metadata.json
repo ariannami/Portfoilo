@@ -1,0 +1,6 @@
+{
+  "name": "Atelier Unit — 3D Artist turned Industrial Designer",
+  "description": "Product visualization, hard-surface modeling, and CGI for brands and studios worldwide.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

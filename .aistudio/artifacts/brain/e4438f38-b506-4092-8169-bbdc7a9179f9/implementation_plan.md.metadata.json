@@ -1,0 +1,6 @@
+{
+  "summary":  "Updated implementation plan to remove the dark .hero__scrim overlay completely from the first section and implement the custom IntersectionObserver lazy-loading for all below-the-fold .mobile-img elements.",
+  "updatedAt":  "2026-10-24T12:36:50.751050802Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

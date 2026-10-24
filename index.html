@@ -1,0 +1,2700 @@
+<!doctype html>
+<html lang="en" class="is-entering">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d0905">
+    <title>Atelier Unit — 3D Artist turned Industrial Designer</title>
+    <meta name="description" content="Product visualization, hard-surface modeling, and CGI for brands and studios worldwide.">
+    <link rel="preload" as="image" href="/assets/aistudio/Untitled1_da706d99.jpg" fetchpriority="high">
+    <link rel="preload" as="font" type="font/woff2" href="assets/au-grotesk-bold.woff2" crossorigin>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/assets/app.js" defer></script>
+    <style>
+      @font-face {
+        font-family: "AU Grotesk";
+        src: url("assets/au-grotesk-regular.woff2") format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "AU Grotesk";
+        src: url("assets/au-grotesk-bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      picture {
+        display: contents;
+      }
+
+      :root {
+        --vh: 1vh;
+        --ink: #ffffff;
+        --base-bot: #130e09;
+        --rule: rgba(255, 255, 255, 0.115);
+        --grid: rgba(255, 255, 255, 0.0265);
+        --menu-bg: #fcfcfc;
+        --menu-ink: #141414;
+        --small-min: 10px;
+        --u: min(100vw / 1280, var(--vh) * 100 / 800);
+        --small: max(var(--small-min), calc(12.6 * var(--u)));
+        --e-expo: cubic-bezier(.16, 1, .3, 1);
+        --e-quint: cubic-bezier(.22, 1, .36, 1);
+        --e-sweep: cubic-bezier(.76, 0, .24, 1);
+        --au-state: paused;
+      }
+
+      @supports (height: 1dvh) {
+        :root {
+          --vh: 1dvh;
+        }
+      }
+
+      @media (min-height: 480px) {
+        :root {
+          --small-min: 11.28px;
+        }
+      }
+
+      html {
+        scroll-behavior: smooth;
+        margin: 0;
+        padding: 0;
+        background: #0d0905;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        background: #0d0905;
+        font-family: "AU Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
+        font-kerning: normal;
+        overflow-x: hidden;
+      }
+
+      a, button {
+        color: inherit;
+        font: inherit;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      :focus-visible {
+        outline: 1px solid white;
+        outline-offset: 3px;
+      }
+
+      .hero {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 560px;
+        background: #0d0905;
+      }
+
+      .hero__photo {
+        position: absolute;
+        z-index: -3;
+        --pw: max(min(100vw, calc(1536 * var(--u))), calc(var(--vh) * 160));
+        --fade: clamp(0px, calc(100vw - var(--pw)), calc(var(--pw) * .08));
+        top: var(--photo-top, 0px);
+        left: calc((100vw - var(--pw)) * .5293);
+        width: var(--pw);
+        aspect-ratio: 16 / 10;
+        background: #130e09;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black var(--fade), black calc(100% - var(--fade)), transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, black var(--fade), black calc(100% - var(--fade)), transparent 100%);
+      }
+
+      .hero__photo img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+      }
+
+      .grid {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(48, 1fr);
+        z-index: -1;
+        pointer-events: none;
+        -webkit-mask-image: radial-gradient(ellipse 62% 95% at 50% 62%, rgba(0, 0, 0, 0.83) 0%, #000 100%);
+        mask-image: radial-gradient(ellipse 62% 95% at 50% 62%, rgba(0, 0, 0, 0.83) 0%, #000 100%);
+      }
+
+      .grid i {
+        position: relative;
+        display: block;
+        height: 100%;
+      }
+
+      .grid i::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(75% - 0.5px);
+        width: 2px;
+        background-color: var(--grid);
+      }
+
+      .small {
+        font-size: var(--small);
+        line-height: 1;
+        font-weight: 400;
+        margin: 0;
+        letter-spacing: var(--ls, -0.051em);
+      }
+
+      .small, .actions {
+        -webkit-text-stroke: 0.022em currentColor;
+      }
+
+      .logo {
+        position: absolute;
+        left: calc(20.65 * var(--u));
+        top: var(--bar-top, calc(12.8 * var(--u)));
+        width: max(calc(142.60 * var(--u)), 96px);
+        display: block;
+      }
+
+      .tagline {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: var(--bar-top, calc(12.6 * var(--u)));
+        text-align: center;
+        white-space: nowrap;
+        font-weight: 500;
+        color: #ffffff;
+      }
+
+      .tagline span {
+        display: inline-block;
+        letter-spacing: var(--ls);
+      }
+
+      .actions {
+        position: absolute;
+        right: var(--actions-right, calc(32 * var(--u)));
+        top: var(--bar-top, calc(13 * var(--u)));
+        display: flex;
+        align-items: center;
+        gap: var(--actions-gap, 1.22em);
+        font-size: var(--small);
+        line-height: 1;
+      }
+
+      .actions .lang {
+        letter-spacing: -0.064em;
+        line-height: 1;
+        transform: translate(0em, 0.139em);
+        -webkit-text-stroke: 0.01em currentColor;
+      }
+
+      .actions .menu {
+        letter-spacing: -0.055em;
+        width: 6.349em;
+        height: 1.508em;
+        background: var(--menu-bg, #fcfcfc);
+        color: var(--menu-ink, #141414);
+        text-align: left;
+        padding-left: 0.33em;
+        line-height: 1.508em;
+        display: block;
+      }
+
+      .actions .menu span {
+        display: inline-block;
+        transform: translateY(0);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .actions .menu:hover {
+          background: #ffffff;
+        }
+      }
+
+      .hl {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: var(--hl-bottom, calc(34 * var(--u)));
+        margin: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: var(--hl-font-size, clamp(1.6rem, calc(52 * var(--u)), 3.85rem));
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 2;
+        padding-inline: 1rem;
+        text-shadow:
+          0 2px 24px rgba(0, 0, 0, 0.95),
+          0 8px 45px rgba(0, 0, 0, 0.9),
+          0 1px 3px rgba(0, 0, 0, 0.85);
+      }
+
+      .hl__line {
+        display: inline-block;
+        text-align: center;
+        width: auto;
+        overflow: visible;
+      }
+
+      .hl__clip {
+        display: inline-block;
+        clip-path: inset(-0.35em -0.6em -0.15em -0.6em);
+      }
+
+      .hl__track {
+        display: inline-block;
+        position: relative;
+        will-change: translate, transform;
+      }
+
+      /* Responsive composition queries */
+      @media (max-aspect-ratio: 114/100) {
+        :root {
+          --small-min: 12px;
+          --m: clamp(16px, 3.2vw, 32px);
+          --bar-top: calc(var(--m) * 0.64);
+        }
+        .logo {
+          left: var(--m);
+          top: var(--bar-top);
+        }
+        .tagline {
+          top: var(--bar-top);
+        }
+        .actions {
+          right: var(--m);
+          top: var(--bar-top);
+        }
+        .hero__photo {
+          --pw: calc(var(--vh) * 138.6);
+          --photo-top: calc(var(--vh) * 15);
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 11%, black 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, black 11%, black 100%);
+        }
+        .hl {
+          font-size: clamp(1.2rem, calc((100vw - 2 * var(--m)) / 16), 2.5rem);
+          bottom: max(1.2em, calc(20px + env(safe-area-inset-bottom, 0px)));
+        }
+      }
+
+      @media (max-aspect-ratio: 114/100) and (max-width: 679px) {
+        :root {
+          --small-min: 11.5px;
+          --bar-top: calc(var(--m) * 0.64 + env(safe-area-inset-top, 0px));
+        }
+        .logo {
+          width: 104px;
+        }
+        .actions {
+          gap: 14px;
+        }
+        .tagline {
+          left: 50%;
+          transform: translateX(-50%);
+          top: var(--bar-top);
+        }
+      }
+
+      @media (max-aspect-ratio: 114/100) and (max-width: 309px) {
+        :root {
+          --F: calc((100vw - 2 * var(--m)) / 6.3063);
+          --hl-bot: max(0.49140em, calc(18px + env(safe-area-inset-bottom, 0px)));
+          --ptop: max(calc(var(--vh) * 15), min(calc(150px + env(safe-area-inset-top, 0px)), calc(var(--vh) * 71 - var(--hl-bot) - 2.30 * var(--F) - 56px)));
+        }
+        .hero__photo {
+          --photo-top: var(--ptop);
+        }
+      }
+
+      @media (max-height: 479px) and (min-aspect-ratio: 1141/1000) {
+        :root {
+          --small-min: 11.5px;
+          --mL: max(16px, env(safe-area-inset-left, 0px));
+          --mR: max(16px, env(safe-area-inset-right, 0px));
+          --bar-top: calc(16px * 0.64);
+        }
+        .logo {
+          left: var(--mL);
+          top: var(--bar-top);
+        }
+        .tagline {
+          left: 50%;
+          transform: translateX(-50%);
+          top: var(--bar-top);
+        }
+        .actions {
+          right: var(--mR);
+          top: var(--bar-top);
+        }
+        .hl {
+          left: calc(var(--mL) + (100% - var(--mL) - var(--mR)) / 2);
+          font-size: clamp(1rem, calc(38 * var(--u)), 2rem);
+          bottom: max(0.49140em, calc(8px + env(safe-area-inset-bottom, 0px)));
+        }
+      }
+
+      /* Coarse pointers */
+      @media (pointer: coarse) {
+        .lang, .menu, .logo {
+          position: relative;
+        }
+        .lang::after, .menu::after, .logo::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          min-height: 44px;
+        }
+        .lang::after {
+          left: -12px;
+          right: calc(-1 * var(--actions-gap, 1.22em) / 2);
+        }
+        .menu::after {
+          left: calc(-1 * var(--actions-gap, 1.22em) / 2);
+          right: -10px;
+        }
+        .logo::after {
+          left: -10px;
+          right: -10px;
+        }
+      }
+
+      /* Keyframes */
+      @keyframes au-rise {
+        from {
+          translate: 0 var(--rise);
+        }
+        to {
+          translate: 0 0;
+        }
+      }
+
+      @keyframes au-soft {
+        from {
+          translate: 0 var(--rise);
+          opacity: 0;
+        }
+        to {
+          translate: 0 0;
+          opacity: 1;
+        }
+      }
+
+      @keyframes au-wipe {
+        from {
+          clip-path: inset(0 100% 0 0);
+        }
+        to {
+          clip-path: inset(0 0 0 0);
+        }
+      }
+
+      /* Entrance choreography */
+      @media (prefers-reduced-motion: no-preference) {
+        .actions .menu {
+          transition: background-color 0.15s;
+        }
+
+        html.is-entering {
+          --au-state: paused;
+        }
+
+        html.is-entering.is-playing {
+          --au-state: running;
+        }
+
+        html.is-entering .hl__track {
+          --rise: 1em;
+          animation: au-rise 1.05s var(--e-expo) var(--track-delay) backwards;
+          animation-play-state: var(--au-state);
+          will-change: translate, transform;
+        }
+
+        html.is-entering .logo span,
+        html.is-entering .tagline span,
+        html.is-entering .actions .lang {
+          --rise: 0.55em;
+          animation: au-soft 0.75s var(--e-quint) var(--soft-delay) backwards;
+          animation-play-state: var(--au-state);
+        }
+
+        html.is-entering .actions .lang {
+          animation-duration: 0.6s;
+        }
+
+        html.is-entering .actions .menu {
+          animation: au-wipe 0.6s cubic-bezier(.25, 1, .5, 1) 1.02s backwards;
+          animation-play-state: var(--au-state);
+        }
+      }
+
+      /* Hero Scroll Cue */
+      .hero__scroll-cue {
+        position: absolute;
+        bottom: 0.85rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.65);
+        cursor: pointer;
+        z-index: 10;
+        transition: color 0.2s ease, transform 0.2s ease;
+        padding: 0.5rem 1rem;
+      }
+
+      .hero__scroll-cue:hover {
+        color: #ffffff;
+        transform: translate(-50%, 2px);
+      }
+
+      /* Second Page / Project Section */
+      .work-section {
+        position: relative;
+        background: #0b0805;
+        color: #e0e0e0;
+        padding-block: clamp(4rem, 10vh, 7rem);
+        padding-inline: clamp(1.25rem, 5vw, 5rem);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        z-index: 5;
+      }
+
+      .section-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      .section-meta strong {
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      .project-showcase {
+        margin-top: 4rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 5rem;
+      }
+
+      .project-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+      }
+
+      .project-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .project-card__title {
+        font-size: clamp(1.75rem, 3.5vw, 3rem);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        color: #ffffff;
+        margin: 0;
+      }
+
+      .project-card__title-rule {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255, 168, 52, 0.65) 0%, rgba(255, 255, 255, 0.16) 45%, rgba(255, 255, 255, 0.04) 100%);
+        margin-block: 0.65rem 0.55rem;
+      }
+
+      .project-card__subtitle {
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #ffa834;
+        margin: 0 0 0.45rem 0;
+      }
+
+      .project-card__tags {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.55);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .project-card__media {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        background: #0a0c0e;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        user-select: none;
+      }
+
+      .project-card__media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      :where(.mobile-img):not(.media-focus) {
+        opacity: 0;
+        transition: opacity 0.45s cubic-bezier(.16, 1, .3, 1);
+      }
+
+      :where(.mobile-img.is-lazy-loaded):not(.media-focus) {
+        opacity: 1;
+      }
+
+      .project-card__media .media-base {
+        transition:
+          filter 0.4s cubic-bezier(.16, 1, .3, 1),
+          opacity 0.45s cubic-bezier(.16, 1, .3, 1),
+          transform 0.6s cubic-bezier(.16, 1, .3, 1);
+      }
+
+      .project-card__media:not(.is-part-active):hover .media-base,
+      .project-card__media:not(.is-part-active):hover .media-focus {
+        transform: scale(1.012);
+      }
+
+      /* Shared focused overlay layer styling for all 5 drone parts */
+      .project-card__media .media-focus {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        transition:
+          opacity 0.35s cubic-bezier(.16, 1, .3, 1),
+          transform 0.6s cubic-bezier(.16, 1, .3, 1),
+          filter 0.35s cubic-bezier(.16, 1, .3, 1);
+        z-index: 2;
+      }
+
+      .project-card__media .media-focus-battery {
+        clip-path: url(#clip-battery);
+      }
+
+      .project-card__media .media-focus-propeller {
+        clip-path: url(#clip-propeller);
+      }
+
+      .project-card__media .media-focus-chassis {
+        clip-path: url(#clip-chassis);
+      }
+
+      .project-card__media .media-focus-arms {
+        clip-path: url(#clip-arms);
+      }
+
+      .project-card__media .media-focus-landing-gear {
+        clip-path: url(#clip-landing-gear);
+      }
+
+      .project-card__media .media-focus-station-transport {
+        clip-path: url(#clip-station-transport);
+      }
+
+      .project-card__media .media-focus-station-shelter {
+        clip-path: url(#clip-station-shelter);
+      }
+
+      .project-card__media .media-focus-station-charging {
+        clip-path: url(#clip-station-charging);
+      }
+
+      .project-card__media .media-focus-station-processing {
+        clip-path: url(#clip-station-processing);
+      }
+
+      .project-card__media .media-focus-station-agripad {
+        clip-path: url(#clip-station-agripad);
+      }
+
+      .project-card__media .media-focus-station-landing {
+        clip-path: url(#clip-station-landing);
+      }
+
+      .project-card__media .media-focus-station-legs {
+        clip-path: url(#clip-station-legs);
+      }
+
+      /* Reduced blur and gentle fade when any part is active */
+      .project-card__media.is-part-active {
+        cursor: pointer;
+      }
+
+      .project-card__media.is-part-active .media-base {
+        filter: blur(5px) brightness(0.48) saturate(0.65);
+        opacity: 0.55;
+        transform: scale(1);
+      }
+
+      .project-card__media[data-active-part="battery"] .media-focus-battery,
+      .project-card__media[data-active-part="propeller"] .media-focus-propeller,
+      .project-card__media[data-active-part="chassis"] .media-focus-chassis,
+      .project-card__media[data-active-part="arms"] .media-focus-arms,
+      .project-card__media[data-active-part="landing-gear"] .media-focus-landing-gear,
+      .project-card__media[data-active-part="station-transport"] .media-focus-station-transport,
+      .project-card__media[data-active-part="station-shelter"] .media-focus-station-shelter,
+      .project-card__media[data-active-part="station-charging"] .media-focus-station-charging,
+      .project-card__media[data-active-part="station-processing"] .media-focus-station-processing,
+      .project-card__media[data-active-part="station-agripad"] .media-focus-station-agripad,
+      .project-card__media[data-active-part="station-landing"] .media-focus-station-landing,
+      .project-card__media[data-active-part="station-legs"] .media-focus-station-legs {
+        opacity: 1;
+        transform: scale(1);
+        filter: drop-shadow(0 0 18px rgba(245, 148, 35, 0.28));
+      }
+
+      /* Interactive hotspot buttons across the drone anatomy */
+      .drone-hotspot {
+        position: absolute;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        z-index: 4;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      }
+
+      .drone-hotspot:hover,
+      .drone-hotspot:focus-visible,
+      .drone-hotspot.is-part-hovered {
+        border-color: rgba(255, 168, 52, 0.55);
+        box-shadow: 0 0 16px rgba(255, 152, 36, 0.22);
+        background-color: rgba(255, 168, 52, 0.045);
+      }
+
+      /* 1. Battery Hotspot (Center Orange Modules) */
+      .battery-hotspot {
+        left: 42.3%;
+        top: 31.7%;
+        width: 15.3%;
+        height: 8.7%;
+        z-index: 6;
+      }
+
+      /* 2. Propeller Hotspots (4 Rotor Assemblies) */
+      .propeller-hotspot--tl {
+        left: 9.8%;
+        top: 16.5%;
+        width: 17.8%;
+        height: 15.5%;
+      }
+
+      .propeller-hotspot--tr {
+        left: 73.0%;
+        top: 17.0%;
+        width: 15.5%;
+        height: 15.0%;
+      }
+
+      .propeller-hotspot--bl {
+        left: 4.8%;
+        top: 48.5%;
+        width: 17.2%;
+        height: 22.5%;
+      }
+
+      .propeller-hotspot--br {
+        left: 77.2%;
+        top: 49.5%;
+        width: 20.5%;
+        height: 20.0%;
+      }
+
+      /* 3. Extendable Arms Hotspots (4 Carbon-Fiber Rotor Booms) */
+      .arms-hotspot--tl {
+        left: 22.0%;
+        top: 26.8%;
+        width: 18.8%;
+        height: 9.2%;
+      }
+
+      .arms-hotspot--tr {
+        left: 58.2%;
+        top: 26.8%;
+        width: 19.5%;
+        height: 9.2%;
+      }
+
+      .arms-hotspot--bl {
+        left: 17.5%;
+        top: 45.0%;
+        width: 19.2%;
+        height: 17.5%;
+      }
+
+      .arms-hotspot--br {
+        left: 62.8%;
+        top: 45.0%;
+        width: 20.2%;
+        height: 17.5%;
+      }
+
+      /* 4. Chassis - Upper Body Hotspots (Upper Hood & Front Sensor Visor) */
+      .chassis-hotspot--upper {
+        left: 41.5%;
+        top: 25.5%;
+        width: 17.0%;
+        height: 6.0%;
+      }
+
+      .chassis-hotspot--visor {
+        left: 36.8%;
+        top: 40.6%;
+        width: 26.4%;
+        height: 23.0%;
+      }
+
+      /* 5. Landing Gear Hotspots (2 Telescopic Struts) */
+      .landing-gear-hotspot--left {
+        left: 37.0%;
+        top: 59.5%;
+        width: 5.2%;
+        height: 24.8%;
+        z-index: 5;
+      }
+
+      .landing-gear-hotspot--right {
+        left: 57.8%;
+        top: 59.5%;
+        width: 5.2%;
+        height: 24.8%;
+        z-index: 5;
+      }
+
+      /* Ground Station Hotspots (Section 3) */
+      .station-transport-hotspot--handle {
+        left: 73.0%;
+        top: 27.0%;
+        width: 11.2%;
+        height: 15.5%;
+        z-index: 5;
+      }
+
+      .station-transport-hotspot--wheels-right {
+        left: 72.5%;
+        top: 75.5%;
+        width: 17.5%;
+        height: 19.5%;
+      }
+
+      .station-transport-hotspot--wheel-left {
+        left: 12.8%;
+        top: 76.0%;
+        width: 10.2%;
+        height: 19.0%;
+        z-index: 5;
+      }
+
+      .station-shelter-hotspot--open {
+        left: 17.0%;
+        top: 2.2%;
+        width: 17.2%;
+        height: 32.0%;
+      }
+
+      .station-shelter-hotspot--closed {
+        left: 59.8%;
+        top: 31.0%;
+        width: 13.0%;
+        height: 18.0%;
+      }
+
+      .station-charging-hotspot--display {
+        left: 34.0%;
+        top: 49.0%;
+        width: 9.0%;
+        height: 18.0%;
+        z-index: 6;
+      }
+
+      .station-charging-hotspot--port {
+        left: 78.0%;
+        top: 78.0%;
+        width: 8.5%;
+        height: 14.5%;
+        z-index: 6;
+      }
+
+      .station-processing-hotspot--node {
+        left: 74.8%;
+        top: 43.0%;
+        width: 8.8%;
+        height: 24.0%;
+        z-index: 6;
+      }
+
+      .station-agripad-hotspot {
+        left: 61.0%;
+        top: 81.0%;
+        width: 11.2%;
+        height: 15.5%;
+        z-index: 6;
+      }
+
+      .station-landing-hotspot--deck {
+        left: 17.5%;
+        top: 34.8%;
+        width: 26.2%;
+        height: 13.8%;
+      }
+
+      .station-legs-hotspot--deployed {
+        left: 10.8%;
+        top: 45.0%;
+        width: 14.0%;
+        height: 30.5%;
+      }
+
+      .station-legs-hotspot--stowed {
+        left: 61.5%;
+        top: 47.5%;
+        width: 9.3%;
+        height: 27.0%;
+        z-index: 5;
+      }
+
+      /* Small floating callout label that appears above when any part is tapped */
+      .part-callout {
+        position: absolute;
+        left: var(--callout-x, 50%);
+        top: var(--callout-y, 29.8%);
+        transform: translate(-50%, -100%) translateY(6px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.3s cubic-bezier(.16, 1, .3, 1),
+          transform 0.3s cubic-bezier(.16, 1, .3, 1),
+          left 0.3s cubic-bezier(.16, 1, .3, 1),
+          top 0.3s cubic-bezier(.16, 1, .3, 1),
+          visibility 0.3s;
+        z-index: 8;
+      }
+
+      .project-card__media.is-part-active .part-callout {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -100%) translateY(0);
+      }
+
+      .part-callout__text {
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #ffffff;
+        background: rgba(15, 15, 15, 0.86);
+        border: 1px solid rgba(255, 170, 55, 0.6);
+        padding: 0.32rem 0.75rem;
+        border-radius: 2px;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        white-space: nowrap;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+      }
+
+      .part-callout__line {
+        width: 1px;
+        height: 16px;
+        background: linear-gradient(to bottom, rgba(255, 170, 55, 0.85), rgba(255, 170, 55, 0.2));
+      }
+
+      /* Secondary hover tooltip positioned below the hovered drone part */
+      .part-hover-tooltip {
+        position: absolute;
+        left: var(--hover-x, 50%);
+        top: var(--hover-y, 42%);
+        transform: translate(-50%, -4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.18s cubic-bezier(.16, 1, .3, 1),
+          transform 0.18s cubic-bezier(.16, 1, .3, 1),
+          left 0.18s cubic-bezier(.16, 1, .3, 1),
+          top 0.18s cubic-bezier(.16, 1, .3, 1),
+          visibility 0.18s;
+        z-index: 9;
+      }
+
+      .project-card__media.is-part-hovering .part-hover-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+      }
+
+      .part-hover-tooltip__line {
+        width: 1px;
+        height: 12px;
+        background: linear-gradient(to top, rgba(255, 255, 255, 0.65), rgba(255, 170, 55, 0.25));
+      }
+
+      .part-hover-tooltip__box {
+        background: rgba(12, 12, 14, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 0.42rem 0.75rem;
+        border-radius: 3px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .part-hover-tooltip__kicker {
+        font-size: 10px;
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #ffa834;
+      }
+
+      .part-hover-tooltip__spec {
+        font-size: 11.5px;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: #e6e2dd;
+      }
+
+      /* Rotate / View Switcher Control in Drone Viewport */
+      .drone-view-controls {
+        position: absolute;
+        bottom: 1.15rem;
+        right: 1.25rem;
+        z-index: 10;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: rgba(12, 12, 14, 0.84);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 3px;
+        padding: 0.28rem;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      }
+
+      .drone-view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.38rem 0.7rem;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.62);
+        border-radius: 2px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+      }
+
+      .drone-view-btn:hover {
+        color: #ffffff;
+      }
+
+      .drone-view-btn.is-active {
+        color: #ffffff;
+        background: rgba(255, 168, 52, 0.18);
+        border: 1px solid rgba(255, 168, 52, 0.55);
+      }
+
+      .drone-rotate-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.42rem;
+        padding: 0.38rem 0.75rem;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #ffffff;
+        border-left: 1px solid rgba(255, 255, 255, 0.14);
+        margin-left: 0.15rem;
+        padding-left: 0.75rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: color 0.18s ease;
+      }
+
+      .drone-rotate-trigger:hover {
+        color: #ffa834;
+      }
+
+      .drone-rotate-trigger svg {
+        width: 13px;
+        height: 13px;
+        stroke: currentColor;
+        transition: transform 0.45s cubic-bezier(.16, 1, .3, 1);
+      }
+
+      .project-card__media[data-view="back"] .drone-rotate-trigger svg {
+        transform: rotate(180deg);
+      }
+
+      .project-card__media.is-switching-view .media-base,
+      .project-card__media.is-switching-view .media-focus {
+        opacity: 0.25;
+        transform: scale(0.988);
+      }
+
+      .project-specs-intro {
+        margin: 0.5rem 0 0 0;
+        max-width: 68ch;
+        font-size: clamp(1rem, 1.35vw, 1.18rem);
+        line-height: 1.6;
+        letter-spacing: -0.01em;
+        color: #ffa834;
+      }
+
+      .station-section-divider {
+        margin-top: 6rem;
+        padding-top: 4rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .section-meta--sub {
+        margin-bottom: 1.5rem;
+      }
+
+      .clip-defs-svg {
+        position: absolute;
+        pointer-events: none;
+      }
+
+      .project-specs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 2rem;
+        padding-top: 0.5rem;
+      }
+
+      .spec-item {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+        cursor: pointer;
+        transition: border-color 0.25s ease, opacity 0.25s ease;
+      }
+
+      .spec-item:hover,
+      .spec-item.is-active {
+        border-top-color: rgba(255, 170, 55, 0.8);
+      }
+
+      .spec-item__num {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.45);
+        letter-spacing: 0.1em;
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .spec-item.is-active .spec-item__num {
+        color: #ffa834;
+      }
+
+      .spec-item__title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-top: 0.35rem;
+      }
+
+      .spec-item__desc {
+        font-size: 13px;
+        line-height: 1.6;
+        color: #b0a8a0;
+        margin-top: 0.35rem;
+      }
+
+      /* Site Footer */
+      .site-footer {
+        margin-top: 6rem;
+        padding-top: 2.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      .site-footer a {
+        color: #ffffff;
+        transition: opacity 0.2s ease;
+      }
+
+      .site-footer a:hover {
+        opacity: 0.75;
+      }
+
+      /* SECTION 4: Automated Mission Workflow (Pure Black & RTL-Ready Logical Properties) */
+      #mission-workflow {
+        background-color: #000000;
+        color: #E0E0E0;
+        padding-block: 4rem;
+        padding-inline: 2rem;
+        border-radius: 2px;
+        text-align: start;
+      }
+
+      .workflow-index {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        border-block-start: 1px solid #222222;
+        padding-block-start: 1.25rem;
+        margin-block-end: 2.5rem;
+        font-family: monospace;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: #888888;
+        text-transform: uppercase;
+      }
+
+      .workflow-index__item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .workflow-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.65rem;
+        margin-block-end: 2.5rem;
+      }
+
+      .workflow-header__title {
+        font-size: clamp(2rem, 3.5vw, 3rem);
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: #FFFFFF;
+        margin: 0;
+      }
+
+      .workflow-header__subtitle {
+        font-size: 0.875rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #FF9900;
+        margin: 0;
+      }
+
+      .workflow-header__desc {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #A0A0A0;
+        margin: 0;
+        max-width: 65ch;
+      }
+
+      /* Visual Track: 5 Empty 16:9 Wireframe Placeholders */
+      .workflow-visual-track {
+        display: flex;
+        gap: 2rem;
+        margin-block-end: 2.5rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-block-end: 0.5rem;
+      }
+
+      .workflow-visual-placeholder {
+        flex: 1 0 280px;
+        aspect-ratio: 16 / 9;
+        background-color: #1A1A1A;
+        border: 1px solid #333333;
+        scroll-snap-align: start;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+      }
+
+      .workflow-visual-placeholder:hover {
+        border-color: #555555;
+      }
+
+      .workflow-visual-placeholder img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* 5-Step Grid with Horizontal Scroll-Snap on Mobile */
+      .workflow-timeline {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+        position: relative;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-block-start: 0.35rem;
+        padding-block-end: 1rem;
+      }
+
+      .workflow-step {
+        position: relative;
+        min-width: 280px;
+        scroll-snap-align: start;
+        padding-block-start: 1.5rem;
+        border-block-start: 1px solid #2A2A2A;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        transition: border-color 0.2s ease;
+      }
+
+      .workflow-step::before {
+        content: "";
+        position: absolute;
+        inset-block-start: -3.5px;
+        inset-inline-start: 0;
+        width: 6px;
+        height: 6px;
+        background-color: #000000;
+        border: 1px solid #555555;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .workflow-step:hover {
+        border-block-start-color: #FF9900;
+      }
+
+      .workflow-step:hover::before {
+        background-color: #FF9900;
+        border-color: #FF9900;
+      }
+
+      .workflow-step__meta {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.45rem;
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #FF9900;
+      }
+
+      .workflow-step__title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        color: #FFFFFF;
+        margin: 0;
+      }
+
+      .workflow-step__desc {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #A0A0A0;
+        margin: 0;
+      }
+
+      /* Manual Override Banner with RTL-Ready border-inline-start */
+      .workflow-note {
+        margin-block-start: 2rem;
+        background-color: #111111;
+        border: 1px solid #222222;
+        border-inline-start: 3px solid #FF9900;
+        padding-block: 1.5rem;
+        padding-inline: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .workflow-note__label {
+        font-family: Arial;
+        font-size: 18px;
+        font-weight: bold;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #FF9900;
+      }
+
+      .workflow-note__text {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #A0A0A0;
+        margin: 0;
+      }
+
+      /* SECTION 5: Form & Instrument Ergonomics (Asymmetric Split-Screen) */
+      .ergonomics-list {
+        display: flex;
+        flex-direction: column;
+        gap: 3.5rem;
+        margin-top: 0.75rem;
+      }
+
+      .ergonomics-row {
+        display: grid;
+        grid-template-columns: 5fr 7fr;
+        gap: clamp(2rem, 4vw, 4rem);
+        align-items: stretch;
+        padding-top: 2.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .ergonomics-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1.25rem;
+      }
+
+      .ergonomics-copy__top {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .ergonomics-copy__index {
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #ffa834;
+      }
+
+      .ergonomics-copy__title {
+        font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        margin: 0;
+      }
+
+      .ergonomics-copy__body {
+        font-size: 15px;
+        line-height: 1.68;
+        color: #b5ada5;
+        margin: 0;
+        max-width: 54ch;
+      }
+
+      .ergonomics-copy__tag {
+        font-family: monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.42);
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .macro-placeholder {
+        position: relative;
+        min-height: 290px;
+        aspect-ratio: 16 / 9;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.005) 100%),
+          repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0px, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 36px),
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0px, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 36px),
+          #0e0c0a;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 3px;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        transition: border-color 0.25s ease;
+      }
+
+      .macro-placeholder:hover {
+        border-color: rgba(255, 168, 52, 0.5);
+      }
+
+      /* SECTION 6: Materiality — The 80/15/5 Rule */
+      .cmf-ratio-bar {
+        display: grid;
+        grid-template-columns: 80fr 15fr 5fr;
+        gap: 4px;
+        width: 100%;
+        margin-top: 0.5rem;
+      }
+
+      .cmf-ratio-segment {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+
+      .cmf-ratio-segment__fill {
+        height: 10px;
+        border-radius: 1px;
+      }
+
+      .cmf-ratio-segment--80 .cmf-ratio-segment__fill {
+        background: #d9d9d9;
+      }
+
+      .cmf-ratio-segment--15 .cmf-ratio-segment__fill {
+        background: #2a2a2a;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+      }
+
+      .cmf-ratio-segment--5 .cmf-ratio-segment__fill {
+        background: #ff6600;
+      }
+
+      .cmf-ratio-segment__caption {
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.58);
+      }
+
+      .cmf-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.75rem;
+        margin-top: 1.25rem;
+      }
+
+      .cmf-card {
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        padding-top: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: border-color 0.25s ease;
+      }
+
+      .cmf-card:hover {
+        border-top-color: #ffa834;
+      }
+
+      .cmf-swatch {
+        width: 100%;
+        height: 84px;
+        border-radius: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 0.55rem 0.7rem;
+        font-family: monospace;
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .cmf-swatch--magnesium {
+        background: radial-gradient(circle at 30% 25%, #ececec 0%, #d9d9d9 55%, #bfbfbf 100%);
+        color: #141414;
+      }
+
+      .cmf-swatch--polymer {
+        background:
+          radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0),
+          #2a2a2a;
+        background-size: 4px 4px;
+        color: #e6e6e6;
+      }
+
+      .cmf-swatch--tpu {
+        background: linear-gradient(135deg, #ff771a 0%, #ff6600 60%, #e05500 100%);
+        color: #110902;
+        font-weight: 600;
+      }
+
+      .cmf-swatch--steel {
+        background: repeating-linear-gradient(
+          90deg,
+          #9ea3a8 0px,
+          #b8bdc2 2px,
+          #8f9499 4px,
+          #adb2b7 6px
+        );
+        color: #121416;
+      }
+
+      .cmf-card__title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0;
+        line-height: 1.35;
+      }
+
+      .cmf-card__meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        margin-top: auto;
+      }
+
+      .cmf-card__row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding-top: 0.65rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .cmf-card__key {
+        font-family: monospace;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #ffa834;
+      }
+
+      .cmf-card__val {
+        font-size: 13px;
+        line-height: 1.55;
+        color: #b5ada5;
+        margin: 0;
+      }
+
+      /* SECTION 7: Target Specifications & Intended Impact */
+      .specs-split {
+        display: grid;
+        grid-template-columns: 7fr 5fr;
+        gap: clamp(2rem, 3.5vw, 3.5rem);
+        align-items: start;
+        margin-top: 0.5rem;
+      }
+
+      .specs-split__left {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .specs-split__intro {
+        font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+        line-height: 1.65;
+        color: #b5ada5;
+        margin: 0;
+        max-width: 60ch;
+      }
+
+      .specs-split__media {
+        position: relative;
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 3px;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .specs-split__img {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .specs-ledger {
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .specs-ledger__row {
+        display: grid;
+        grid-template-columns: minmax(185px, 4.5fr) 7.5fr;
+        gap: 1.5rem;
+        padding: 1.05rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        align-items: baseline;
+        transition: background-color 0.2s ease, padding-inline 0.2s ease;
+      }
+
+      .specs-ledger__row:hover {
+        background: rgba(255, 255, 255, 0.02);
+        padding-inline: 0.65rem;
+      }
+
+      .specs-ledger__label {
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.62);
+      }
+
+      .specs-ledger__value {
+        font-size: clamp(0.96rem, 1.2vw, 1.08rem);
+        font-weight: 500;
+        color: #ffffff;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.005em;
+      }
+
+      .impact-banner {
+        margin-top: 0.75rem;
+        padding: clamp(1.5rem, 3vw, 2.25rem);
+        background: linear-gradient(135deg, rgba(255, 168, 52, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid rgba(255, 168, 52, 0.35);
+        border-radius: 3px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .impact-banner__kicker {
+        font-family: monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #ffa834;
+      }
+
+      .impact-banner__statement {
+        font-size: clamp(1.1rem, 1.75vw, 1.45rem);
+        font-weight: 600;
+        line-height: 1.45;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+        margin: 0;
+        max-width: 64ch;
+      }
+
+      @media (max-width: 1024px) {
+        .workflow-index {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.75rem 1.5rem;
+        }
+
+        .cmf-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .ergonomics-row,
+        .specs-split {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .workflow-index,
+        .cmf-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .cmf-ratio-bar {
+          grid-template-columns: 1fr;
+          gap: 0.65rem;
+        }
+
+        .specs-ledger__row {
+          grid-template-columns: 1fr;
+          gap: 0.35rem;
+        }
+
+        .drone-view-controls {
+          bottom: 0.65rem;
+          right: 0.65rem;
+          padding: 0.2rem;
+        }
+
+        .drone-view-btn,
+        .drone-rotate-trigger {
+          padding: 0.3rem 0.5rem;
+          font-size: 10px;
+        }
+      }
+
+      /* Subtle Viewport Image & Asset Preloader */
+      .site-preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #0d0905;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        visibility: visible;
+        transition:
+          opacity 0.55s cubic-bezier(.16, 1, .3, 1),
+          visibility 0.55s cubic-bezier(.16, 1, .3, 1);
+      }
+
+      .site-preloader.is-loaded {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .site-preloader__inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.1rem;
+        width: min(220px, 75vw);
+      }
+
+      .site-preloader__mark {
+        width: 86px;
+        height: auto;
+        opacity: 0.9;
+      }
+
+      .site-preloader__track {
+        position: relative;
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+
+      .site-preloader__bar {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.65), #ffa834);
+        transform-origin: 0 50%;
+        transform: scaleX(var(--load-progress, 0.08));
+        transition: transform 0.25s cubic-bezier(.16, 1, .3, 1);
+      }
+
+      .site-preloader__meta {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 10px;
+        font-family: monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      .site-preloader__pct {
+        color: #ffffff;
+      }
+
+      /* Smooth fade-in for IntersectionObserver lazy-loaded .mobile-img elements */
+      .mobile-img:not(.media-focus) {
+        opacity: 0;
+        transition:
+          opacity 0.45s cubic-bezier(.16, 1, .3, 1),
+          filter 0.4s cubic-bezier(.16, 1, .3, 1),
+          transform 0.6s cubic-bezier(.16, 1, .3, 1);
+      }
+
+      .mobile-img.is-lazy-loaded:not(.media-focus) {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Centered Viewport Preloader -->
+    <div class="site-preloader" id="site-preloader" role="status" aria-live="polite" aria-label="Loading AGRIVISION 4K assets">
+      <div class="site-preloader__inner">
+        <svg class="site-preloader__mark" viewBox="0 0 142.60 30.00" shape-rendering="geometricPrecision" fill="#ffffff" aria-hidden="true">
+          <rect x="0.00" y="0.00" width="8.2" height="8.2" />
+          <rect x="19.20" y="0.00" width="8.2" height="8.2" />
+          <rect x="76.80" y="0.00" width="8.2" height="8.2" />
+          <rect x="115.20" y="0.00" width="8.2" height="8.2" />
+          <rect x="57.60" y="10.90" width="8.2" height="8.2" />
+          <rect x="134.40" y="10.90" width="8.2" height="8.2" />
+          <rect x="0.00" y="21.80" width="8.2" height="8.2" />
+        </svg>
+        <div class="site-preloader__track" aria-hidden="true">
+          <div class="site-preloader__bar" id="preloader-bar"></div>
+        </div>
+        <div class="site-preloader__meta">
+          <span>AGRIVISION ASSETS</span>
+          <span class="site-preloader__pct" id="preloader-pct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero__photo" role="presentation">
+        <img src="/assets/aistudio/Untitled1_da706d99.jpg" srcset="/assets/aistudio/Untitled1_da706d99.jpg 3072w" sizes="100vw" alt="" width="3072" height="1920" fetchpriority="high" decoding="async">
+      </div>
+
+      <div class="grid" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+
+      <a href="#" class="logo small" aria-label="2026">
+        <span style="--ls: -0.035em; --soft-delay: 0.70s;">2026</span>
+      </a>
+
+      <p class="tagline small">
+        <span style="--ls: -0.035em; --soft-delay: 0.78s; font-size: 39.269999999999996px; font-weight: bold; font-style: normal; text-decoration-line: none;">The Agri Vision Ecosystem</span>
+      </p>
+
+      <div class="actions">
+        <button class="lang" type="button" aria-label="Language: English" style="--soft-delay: 0.98s;">EN</button>
+        <button class="menu" type="button" aria-expanded="false"><span>Menu</span></button>
+      </div>
+
+      <h1 class="hl" aria-label="The future of farming from above">
+        <span class="hl__line">
+          <span class="hl__clip">
+            <span class="hl__track" style="--track-delay: 0.16s;">THE FUTURE OF FARMING FROM ABOVE</span>
+          </span>
+        </span>
+      </h1>
+
+      <a href="#case-study" class="hero__scroll-cue" aria-label="Scroll to Case Studies">
+        <span>Explore Work</span> ↓
+      </a>
+    </div>
+
+    <!-- Second Page / Project Section & Interactive Technical Breakdown -->
+    <section id="case-study" class="work-section">
+      <!-- Section Index Meta -->
+      <div class="section-meta">
+        <div>
+          <span>Index</span> &nbsp;—&nbsp; <strong>01 / CASE STUDY</strong>
+        </div>
+        <div>
+          <span>Project</span> &nbsp;—&nbsp; <strong>AGRIVISION ECOSYSTEM</strong>
+        </div>
+        <div>
+          <span>PRINCIPLE</span> &nbsp;—&nbsp; <strong>ZERO INFRASTRUCTURE</strong>
+        </div>
+        <div>
+          <span>TIER</span> &nbsp;—&nbsp; <strong>AGRICULTURAL TECHNOLOGY</strong>
+        </div>
+      </div>
+
+      <!-- Project Showcase -->
+      <div class="project-showcase">
+        <!-- Featured Render: AGRIVISION Autonomous Quadcopter -->
+        <article class="project-card">
+          <div class="project-card__header">
+            <div>
+              <h2 class="project-card__title">AGRIVISION — Autonomous Aerial Unit</h2>
+              <div class="project-card__title-rule" aria-hidden="true"></div>
+              <p class="project-card__subtitle">Eyes of the system</p>
+              <div class="project-card__tags">Tap any subsystem on the drone or select a specification below to inspect</div>
+            </div>
+            <div class="project-card__tags" id="drone-view-indicator">FRONT VIEW · 3840 × 2400 · 4K CGI</div>
+          </div>
+
+          <div class="project-card__media" id="drone-media" data-view="front">
+            <!-- SVG ClipPath Definitions for Symmetrical & Contoured Drone Parts -->
+            <svg width="0" height="0" style="position: absolute; pointer-events: none;" aria-hidden="true">
+              <defs>
+                <!-- 1. Battery (Center Twin Orange Cells) -->
+                <clipPath id="clip-battery" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.424,0.312 0.576,0.312 0.578,0.406 0.422,0.406" />
+                </clipPath>
+
+                <!-- 2. Propellers (All 4 Rotor Blades & Hubs) -->
+                <clipPath id="clip-propeller" clipPathUnits="objectBoundingBox">
+                  <!-- Top-Left Propeller -->
+                  <polygon points="0.098,0.305 0.258,0.155 0.322,0.172 0.235,0.295 0.175,0.305 0.105,0.322" />
+                  <!-- Top-Right Propeller -->
+                  <polygon points="0.680,0.165 0.752,0.155 0.882,0.302 0.870,0.318 0.785,0.305 0.755,0.265" />
+                  <!-- Bottom-Left Propeller -->
+                  <polygon points="0.048,0.410 0.105,0.405 0.218,0.688 0.195,0.710 0.110,0.685 0.080,0.585" />
+                  <!-- Bottom-Right Propeller -->
+                  <polygon points="0.772,0.672 0.928,0.425 0.976,0.518 0.892,0.678 0.845,0.675 0.785,0.690" />
+                </clipPath>
+
+                <!-- 3. Chassis - Upper Body (Upper Frame & Visor/Rear Bay, excluding inner battery cells) -->
+                <clipPath id="clip-chassis" clipPathUnits="objectBoundingBox">
+                  <path clip-rule="evenodd" d="M 0.442,0.255 L 0.558,0.255 L 0.608,0.305 L 0.635,0.445 L 0.633,0.595 L 0.575,0.640 L 0.425,0.640 L 0.367,0.595 L 0.365,0.445 L 0.392,0.305 Z M 0.424,0.312 L 0.422,0.406 L 0.578,0.406 L 0.576,0.312 Z" />
+                </clipPath>
+
+                <!-- 4. Extendable Arms (All 4 Foldable Carbon Rotor Booms) -->
+                <clipPath id="clip-arms" clipPathUnits="objectBoundingBox">
+                  <!-- Top-Left Arm -->
+                  <polygon points="0.200,0.235 0.415,0.308 0.412,0.365 0.198,0.302" />
+                  <!-- Top-Right Arm -->
+                  <polygon points="0.575,0.308 0.795,0.235 0.798,0.302 0.578,0.365" />
+                  <!-- Bottom-Left Arm -->
+                  <polygon points="0.125,0.545 0.395,0.435 0.395,0.535 0.145,0.635" />
+                  <!-- Bottom-Right Arm -->
+                  <polygon points="0.605,0.435 0.875,0.545 0.855,0.635 0.605,0.535" />
+                </clipPath>
+
+                <!-- 5. Landing Gear (Both Telescopic Alloy Struts) -->
+                <clipPath id="clip-landing-gear" clipPathUnits="objectBoundingBox">
+                  <!-- Left Leg -->
+                  <polygon points="0.390,0.585 0.418,0.605 0.402,0.842 0.372,0.842" />
+                  <!-- Right Leg -->
+                  <polygon points="0.582,0.605 0.610,0.585 0.628,0.842 0.598,0.842" />
+                </clipPath>
+              </defs>
+            </svg>
+
+            <!-- Base Render Layer -->
+            <img class="media-base drone-layer-img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled2_91082964.jpg" data-srcset="/assets/aistudio/Untitled2_91082964.jpg 3840w" sizes="(max-width: 860px) 92vw, 90vw" alt="AGRIVISION Autonomous Quadcopter Drone Technical 3D Render" loading="lazy" decoding="async" width="3840" height="2400">
+
+            <!-- Clipped Focus Layers for Each Subsystem -->
+            <img class="media-focus media-focus-battery drone-layer-img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled2_91082964.jpg" data-srcset="/assets/aistudio/Untitled2_91082964.jpg 3840w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="3840" height="2400">
+            <img class="media-focus media-focus-propeller drone-layer-img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled2_91082964.jpg" data-srcset="/assets/aistudio/Untitled2_91082964.jpg 3840w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="3840" height="2400">
+            <img class="media-focus media-focus-chassis drone-layer-img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled2_91082964.jpg" data-srcset="/assets/aistudio/Untitled2_91082964.jpg 3840w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="3840" height="2400">
+            <img class="media-focus media-focus-arms drone-layer-img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled2_91082964.jpg" data-srcset="/assets/aistudio/Untitled2_91082964.jpg 3840w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="3840" height="2400">
+            <img class="media-focus media-focus-landing-gear drone-layer-img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled2_91082964.jpg" data-srcset="/assets/aistudio/Untitled2_91082964.jpg 3840w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="3840" height="2400">
+
+            <!-- 1. Battery Hotspot -->
+            <button type="button" class="drone-hotspot battery-hotspot" data-part="battery" data-callout-x="50%" data-callout-y="29.8%" data-hover-x="50%" data-hover-y="41.2%" aria-label="Inspect Battery" aria-pressed="false"></button>
+
+            <!-- 2. Propeller Hotspots (All 4 Propellers) -->
+            <button type="button" class="drone-hotspot propeller-hotspot propeller-hotspot--tl" data-part="propeller" data-callout-x="19.5%" data-callout-y="16.5%" data-hover-x="19.5%" data-hover-y="32.8%" aria-label="Inspect Propellers" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot propeller-hotspot propeller-hotspot--tr" data-part="propeller" data-callout-x="80.5%" data-callout-y="16.5%" data-hover-x="80.5%" data-hover-y="32.8%" aria-label="Inspect Propellers" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot propeller-hotspot propeller-hotspot--bl" data-part="propeller" data-callout-x="13.5%" data-callout-y="47.5%" data-hover-x="14.5%" data-hover-y="71.5%" aria-label="Inspect Propellers" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot propeller-hotspot propeller-hotspot--br" data-part="propeller" data-callout-x="87.5%" data-callout-y="48.5%" data-hover-x="85.5%" data-hover-y="70.2%" aria-label="Inspect Propellers" aria-pressed="false"></button>
+
+            <!-- 3. Chassis - Upper Body Hotspots -->
+            <button type="button" class="drone-hotspot chassis-hotspot chassis-hotspot--upper" data-part="chassis" data-callout-x="50%" data-callout-y="24.5%" data-hover-x="50%" data-hover-y="64.5%" aria-label="Inspect Chassis - Upper Body" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot chassis-hotspot chassis-hotspot--visor" data-part="chassis" data-callout-x="50%" data-callout-y="41.5%" data-hover-x="50%" data-hover-y="64.5%" aria-label="Inspect Chassis - Upper Body" aria-pressed="false"></button>
+
+            <!-- 4. Extendable Arms Hotspots -->
+            <button type="button" class="drone-hotspot arms-hotspot arms-hotspot--tl" data-part="arms" data-callout-x="31%" data-callout-y="26.5%" data-hover-x="31.5%" data-hover-y="36.8%" aria-label="Inspect Extendable Arms" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot arms-hotspot arms-hotspot--tr" data-part="arms" data-callout-x="68.5%" data-callout-y="26.5%" data-hover-x="68.5%" data-hover-y="36.8%" aria-label="Inspect Extendable Arms" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot arms-hotspot arms-hotspot--bl" data-part="arms" data-callout-x="27%" data-callout-y="46.5%" data-hover-x="27%" data-hover-y="63.2%" aria-label="Inspect Extendable Arms" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot arms-hotspot arms-hotspot--br" data-part="arms" data-callout-x="73%" data-callout-y="46.5%" data-hover-x="73%" data-hover-y="63.2%" aria-label="Inspect Extendable Arms" aria-pressed="false"></button>
+
+            <!-- 5. Landing Gear Hotspots -->
+            <button type="button" class="drone-hotspot landing-gear-hotspot landing-gear-hotspot--left" data-part="landing-gear" data-callout-x="39.5%" data-callout-y="58.5%" data-hover-x="39.5%" data-hover-y="84.8%" aria-label="Inspect Landing Gear" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot landing-gear-hotspot landing-gear-hotspot--right" data-part="landing-gear" data-callout-x="60.5%" data-callout-y="58.5%" data-hover-x="60.5%" data-hover-y="84.8%" aria-label="Inspect Landing Gear" aria-pressed="false"></button>
+
+            <!-- Floating Part Callout Badge (Appears above part on click) -->
+            <div class="part-callout" id="part-callout" role="status" aria-live="polite">
+              <span class="part-callout__text" id="part-callout-text">Battery</span>
+              <span class="part-callout__line" aria-hidden="true"></span>
+            </div>
+
+            <!-- Secondary Hover State Tooltip (Appears below part on hover/focus) -->
+            <div class="part-hover-tooltip" id="part-hover-tooltip" role="tooltip" aria-hidden="true">
+              <span class="part-hover-tooltip__line" aria-hidden="true"></span>
+              <div class="part-hover-tooltip__box">
+                <span class="part-hover-tooltip__kicker" id="part-hover-kicker">01 · BATTERY</span>
+                <span class="part-hover-tooltip__spec" id="part-hover-spec">Dual 22.2V Solid-State LiPo · Hot-Swap · 42 min Flight</span>
+              </div>
+            </div>
+
+            <!-- Rotate / Front-Back View Switcher -->
+            <div class="drone-view-controls" role="group" aria-label="Drone camera angle controls">
+              <button type="button" class="drone-view-btn is-active" data-view-target="front" aria-pressed="true">Front View</button>
+              <button type="button" class="drone-view-btn" data-view-target="back" aria-pressed="false">Back View</button>
+              <button type="button" class="drone-rotate-trigger" id="drone-rotate-btn" aria-label="Rotate drone 180 degrees">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
+                <span>Rotate</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="project-specs-intro">
+            Captures imagery and passes it to the station for analysis. Radar and dual-antenna RTK GPS support obstacle sensing and grid accuracy (targets).
+          </p>
+
+          <div class="project-specs">
+            <div class="spec-item" data-part="battery" role="button" tabindex="0">
+              <span class="spec-item__num">01 / BATTERY</span>
+              <h3 class="spec-item__title">Dual Hot-Swap Battery Cells</h3>
+              <p class="spec-item__desc">Top-mounted twin high-visibility orange power modules engineered for rapid field replacement and optimal center-of-mass balance.</p>
+            </div>
+            <div class="spec-item" data-part="propeller" role="button" tabindex="0">
+              <span class="spec-item__num">02 / PROPELLER</span>
+              <h3 class="spec-item__title">High-Efficiency Rotor Blades</h3>
+              <p class="spec-item__desc">Four low-noise carbon composite propellers with high-visibility orange safety tips and high-torque brushless motor hubs.</p>
+            </div>
+            <div class="spec-item" data-part="chassis" role="button" tabindex="0">
+              <span class="spec-item__num">03 / CHASSIS — UPPER BODY</span>
+              <h3 class="spec-item__title">Monocoque Airframe &amp; Sensor Visor</h3>
+              <p class="spec-item__desc">Sealed upper composite fuselage integrated with a translucent smoked polycarbonate nose fairing housing the multi-spectral camera array.</p>
+            </div>
+            <div class="spec-item" data-part="arms" role="button" tabindex="0">
+              <span class="spec-item__num">04 / EXTENDABLE ARMS</span>
+              <h3 class="spec-item__title">Foldable Carbon Rotor Booms</h3>
+              <p class="spec-item__desc">Four-axis extendable and folding carbon-fiber arms with precision lock joints and orange mechanical latch indicators.</p>
+            </div>
+            <div class="spec-item" data-part="landing-gear" role="button" tabindex="0">
+              <span class="spec-item__num">05 / LANDING GEAR</span>
+              <h3 class="spec-item__title">Telescopic Alloy Struts</h3>
+              <p class="spec-item__desc">Machined stainless and anodized aluminum dual landing legs with articulated damping feet for automated pod docking.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Third Section: AGRIVISION Autonomous Ground Station ("The Brains") -->
+        <article class="project-card station-section-divider" id="ground-station">
+          <!-- Section 02 Index Meta -->
+          <div class="section-meta section-meta--sub">
+            <div>
+              <span>Index</span> &nbsp;—&nbsp; <strong>02 / GROUND STATION</strong>
+            </div>
+            <div>
+              <span>Subsystem</span> &nbsp;—&nbsp; <strong>THE BRAINS</strong>
+            </div>
+            <div>
+              <span>ARCHITECTURE</span> &nbsp;—&nbsp; <strong>ALL-IN-ONE FIELD UNIT</strong>
+            </div>
+            <div>
+              <span>INTELLIGENCE</span> &nbsp;—&nbsp; <strong>EDGE AI TELEMETRY</strong>
+            </div>
+          </div>
+
+          <div class="project-card__header">
+            <div>
+              <h2 class="project-card__title">AGRIHUB - GROUND station</h2>
+              <div class="project-card__title-rule" aria-hidden="true"></div>
+              <p class="project-card__subtitle">Brains of the system</p>
+              <div class="project-card__tags">Tap any subsystem on the ground station or select a specification below to inspect</div>
+            </div>
+            <div class="project-card__tags">DUAL CONFIGURATION · 3840 × 2400 · 4K CGI</div>
+          </div>
+
+          <div class="project-card__media" id="station-media">
+            <!-- SVG ClipPath Definitions for the 7 Ground Station Subsystems -->
+            <svg class="clip-defs-svg" width="0" height="0" aria-hidden="true">
+              <defs>
+                <!-- 1. Transport (Telescopic Handle & Off-Road Treaded Wheels) -->
+                <clipPath id="clip-station-transport" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.728,0.268 0.842,0.268 0.842,0.435 0.728,0.435" />
+                  <polygon points="0.665,0.745 0.902,0.745 0.902,0.960 0.665,0.960" />
+                  <polygon points="0.125,0.755 0.235,0.755 0.235,0.955 0.125,0.955" />
+                </clipPath>
+
+                <!-- 2. Lid (Weatherproof Clamshell Lid with Integrated Solar Panel & Field Kit Bay) -->
+                <clipPath id="clip-station-shelter" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.168,0.018 0.345,0.018 0.345,0.352 0.168,0.352" />
+                  <polygon points="0.595,0.305 0.835,0.305 0.835,0.505 0.595,0.505" />
+                </clipPath>
+
+                <!-- 3. Charging (57% 500W Front Telemetry Display & Rear Power Umbilical) -->
+                <clipPath id="clip-station-charging" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.335,0.485 0.432,0.485 0.432,0.675 0.335,0.675" />
+                  <polygon points="0.775,0.775 0.965,0.775 0.965,0.958 0.775,0.958" />
+                </clipPath>
+
+                <!-- 4. The AGRIPAD integration Bay (Rear Recessed Compute & Docking Bay) -->
+                <clipPath id="clip-station-processing" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.745,0.425 0.838,0.425 0.838,0.675 0.745,0.675" />
+                </clipPath>
+
+                <!-- 5. AGRIPAD (Detached Ruggedized Field Diagnostic Tablet) -->
+                <clipPath id="clip-station-agripad" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.608,0.805 0.722,0.805 0.722,0.968 0.608,0.968" />
+                </clipPath>
+
+                <!-- 6. Launch & Landing (Upper Automated Precision Docking Deck) -->
+                <clipPath id="clip-station-landing" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.172,0.342 0.440,0.342 0.440,0.488 0.172,0.488" />
+                </clipPath>
+
+                <!-- 7. Adjusting Legs (Outrigger Arms) -->
+                <clipPath id="clip-station-legs" clipPathUnits="objectBoundingBox">
+                  <polygon points="0.105,0.445 0.252,0.445 0.215,0.965 0.105,0.965" />
+                  <polygon points="0.415,0.750 0.460,0.750 0.460,0.935 0.415,0.935" />
+                  <polygon points="0.615,0.475 0.708,0.475 0.708,0.745 0.615,0.745" />
+                </clipPath>
+              </defs>
+            </svg>
+
+            <!-- Base Render Layer (WebP via <picture> with JPEG fallback) -->
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-base mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="AGRIHUB - GROUND station Dual View 3D Render" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+
+            <!-- Clipped Focus Layers for Each Ground Station Subsystem -->
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-transport mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-shelter mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-charging mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-processing mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-agripad mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-landing mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+            <picture>
+              <source data-srcset="/assets/aistudio/Untitled10_33ffdca3.webp 1536w" sizes="(max-width: 860px) 92vw, 90vw" type="image/webp">
+              <img class="media-focus media-focus-station-legs mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled11_4308d76d.jpg" data-srcset="/assets/aistudio/Untitled11_4308d76d.jpg 1536w" sizes="(max-width: 860px) 92vw, 90vw" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1536" height="960">
+            </picture>
+
+            <!-- 1. Transport Hotspots -->
+            <button type="button" class="drone-hotspot station-transport-hotspot--handle" data-part="station-transport" data-callout-x="78.5%" data-callout-y="26.0%" data-hover-x="78.5%" data-hover-y="44.2%" aria-label="Inspect Transport System" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot station-transport-hotspot--wheels-right" data-part="station-transport" data-callout-x="78.5%" data-callout-y="74.0%" data-hover-x="78.5%" data-hover-y="95.5%" aria-label="Inspect Transport Wheels" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot station-transport-hotspot--wheel-left" data-part="station-transport" data-callout-x="18.0%" data-callout-y="74.5%" data-hover-x="18.0%" data-hover-y="95.5%" aria-label="Inspect Transport Wheels" aria-pressed="false"></button>
+
+            <!-- 2. Lid Hotspots -->
+            <button type="button" class="drone-hotspot station-shelter-hotspot--open" data-part="station-shelter" data-callout-x="25.6%" data-callout-y="10.5%" data-hover-x="25.6%" data-hover-y="35.8%" aria-label="Inspect Open Lid" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot station-shelter-hotspot--closed" data-part="station-shelter" data-callout-x="66.5%" data-callout-y="30.0%" data-hover-x="66.5%" data-hover-y="50.5%" aria-label="Inspect Closed Lid with Solar Panel" aria-pressed="false"></button>
+
+            <!-- 3. Charging Hotspots -->
+            <button type="button" class="drone-hotspot station-charging-hotspot--display" data-part="station-charging" data-callout-x="38.5%" data-callout-y="47.8%" data-hover-x="38.5%" data-hover-y="68.2%" aria-label="Inspect Charging System" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot station-charging-hotspot--port" data-part="station-charging" data-callout-x="82.0%" data-callout-y="77.0%" data-hover-x="82.0%" data-hover-y="94.5%" aria-label="Inspect Power Umbilical" aria-pressed="false"></button>
+
+            <!-- 4. The AGRIPAD integration Bay Hotspot -->
+            <button type="button" class="drone-hotspot station-processing-hotspot--node" data-part="station-processing" data-callout-x="79.2%" data-callout-y="42.0%" data-hover-x="79.2%" data-hover-y="68.5%" aria-label="Inspect The AGRIPAD integration Bay" aria-pressed="false"></button>
+
+            <!-- 5. AGRIPAD Hotspot -->
+            <button type="button" class="drone-hotspot station-agripad-hotspot" data-part="station-agripad" data-callout-x="66.6%" data-callout-y="79.8%" data-hover-x="66.6%" data-hover-y="96.5%" aria-label="Inspect AGRIPAD" aria-pressed="false"></button>
+
+            <!-- 6. Launch / Landing Hotspot -->
+            <button type="button" class="drone-hotspot station-landing-hotspot--deck" data-part="station-landing" data-callout-x="30.5%" data-callout-y="33.8%" data-hover-x="30.5%" data-hover-y="49.5%" aria-label="Inspect Launch and Landing Deck" aria-pressed="false"></button>
+
+            <!-- 7. Adjusting Legs (Outrigger Arms) Hotspots -->
+            <button type="button" class="drone-hotspot station-legs-hotspot--deployed" data-part="station-legs" data-callout-x="18.0%" data-callout-y="44.0%" data-hover-x="18.0%" data-hover-y="76.5%" aria-label="Inspect Adjusting Legs (Outrigger Arms)" aria-pressed="false"></button>
+            <button type="button" class="drone-hotspot station-legs-hotspot--stowed" data-part="station-legs" data-callout-x="66.2%" data-callout-y="46.5%" data-hover-x="66.2%" data-hover-y="75.2%" aria-label="Inspect Stowed Adjusting Legs (Outrigger Arms)" aria-pressed="false"></button>
+
+            <!-- Floating Part Callout Badge (Ground Station) -->
+            <div class="part-callout" role="status" aria-live="polite">
+              <span class="part-callout__text">The AGRIPAD integration Bay</span>
+              <span class="part-callout__line" aria-hidden="true"></span>
+            </div>
+
+            <!-- Secondary Hover State Tooltip (Ground Station) -->
+            <div class="part-hover-tooltip" role="tooltip" aria-hidden="true">
+              <span class="part-hover-tooltip__line" aria-hidden="true"></span>
+              <div class="part-hover-tooltip__box">
+                <span class="part-hover-tooltip__kicker">04 · THE AGRIPAD INTEGRATION BAY</span>
+                <span class="part-hover-tooltip__spec">Recessed Rear Compute Dock · High-Speed Telemetry Sync</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="project-specs-intro">
+            The station is the brain: AI analysis of crop health, pest zones, soil moisture indicators and possible leaks. A ground station that combines transport, shelter, charging, processing node and launch/landing in one unit.
+          </p>
+
+          <div class="project-specs">
+            <div class="spec-item" data-part="station-transport" role="button" tabindex="0">
+              <span class="spec-item__num">01 / TRANSPORT</span>
+              <h3 class="spec-item__title">All-Terrain Mobility Chassis</h3>
+              <p class="spec-item__desc">The AgriBase is equipped with high-traction, puncture-resistant pneumatic tires designed specifically for uneven agricultural terrain and muddy field conditions.</p>
+            </div>
+            <div class="spec-item" data-part="station-shelter" role="button" tabindex="0">
+              <span class="spec-item__num">02 / LID</span>
+              <h3 class="spec-item__title">Lid</h3>
+              <p class="spec-item__desc">Motorized hardshell clamshell lid protects the aerial unit from dust, rain, and thermal extremes while storing field service tools in the illuminated bay. It has an integrated solar panel on its top surface for continuous auxiliary power harvesting in the field.</p>
+            </div>
+            <div class="spec-item" data-part="station-charging" role="button" tabindex="0">
+              <span class="spec-item__num">03 / CHARGING</span>
+              <h3 class="spec-item__title">500W Autonomous Power &amp; Solar Buffer</h3>
+              <p class="spec-item__desc">High-capacity internal battery bank with top solar harvesting, external grid umbilical, and live front-panel state-of-charge telemetry for rapid mission turnaround.</p>
+            </div>
+            <div class="spec-item" data-part="station-processing" role="button" tabindex="0">
+              <span class="spec-item__num">04 / THE AGRIPAD INTEGRATION BAY</span>
+              <h3 class="spec-item__title">The AGRIPAD integration Bay</h3>
+              <p class="spec-item__desc">The Integration Bay serves as the central command interface between the operator and the AgriVision hardware. Engineered with an active-locking retention cradle, the bay ensures the AgriPad remains securely seated during transit across uneven agricultural terrain. Upon docking, the bay automatically initiates high-speed inductive charging and establishes a localized hardwired link to the AgriNet for instantaneous telemetry synchronization, mission data offloading, and firmware diagnostics without relying on external wireless networks.</p>
+            </div>
+            <div class="spec-item" data-part="station-agripad" role="button" tabindex="0">
+              <span class="spec-item__num">05 / AGRIPAD</span>
+              <h3 class="spec-item__title">AGRIPAD</h3>
+              <p class="spec-item__desc">Detachable ruggedized operator command tablet that locks into the Integration Bay for inductive charging and hardwired AgriNet telemetry sync, providing live field visualization of AI crop health, pest zones, soil moisture indicators, and irrigation leak diagnostics.</p>
+            </div>
+            <div class="spec-item" data-part="station-landing" role="button" tabindex="0">
+              <span class="spec-item__num">06 / LAUNCH &amp; LANDING</span>
+              <h3 class="spec-item__title">RTK Precision Docking Pad</h3>
+              <p class="spec-item__desc">Upper motorized launch and recovery deck engineered with automated centering guides and contact charging rails for centimeter-accurate autonomous touch-downs.</p>
+            </div>
+            <div class="spec-item" data-part="station-legs" role="button" tabindex="0">
+              <span class="spec-item__num">07 / ADJUSTING LEGS</span>
+              <h3 class="spec-item__title">Adjusting Legs (Outrigger Arms)</h3>
+              <p class="spec-item__desc">The AgriBase is equipped with a quad-actuator outrigger system designed to maintain absolute horizontal alignment on unpredictable agricultural terrain. Upon deployment, integrated gyroscopic sensors calculate the ground incline, prompting the independent hydraulic struts to self-adjust. The articulated, wide-stance footpads prevent sinking in mud or loose soil, ensuring a rock-solid landing platform with a zero-degree tilt tolerance for safe UAV recovery.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- SECTION 4: The Automated Mission Workflow -->
+        <article class="project-card station-section-divider" id="mission-workflow">
+          <!-- Top Navigation / Index Header -->
+          <div class="workflow-index">
+            <div class="workflow-index__item" data-i18n="workflow.index.col1">INDEX — 03 / MISSION WORKFLOW</div>
+            <div class="workflow-index__item" data-i18n="workflow.index.col2">PROTOCOL — AUTONOMOUS GRID</div>
+            <div class="workflow-index__item" data-i18n="workflow.index.col3">SEQUENCE — 05-STAGE PIPELINE</div>
+            <div class="workflow-index__item" data-i18n="workflow.index.col4">CONTROL — TABLET TELEMETRY</div>
+          </div>
+
+          <!-- Clean Section Title Area (No floating text on inline-end) -->
+          <header class="workflow-header">
+            <h2 class="workflow-header__title" data-i18n="workflow.title">Automated Mission Workflow</h2>
+            <p class="workflow-header__subtitle" data-i18n="workflow.subtitle">END-TO-END FIELD AUTONOMY</p>
+            <p class="workflow-header__desc" data-i18n="workflow.desc">Five-stage closed-loop execution from boundary trace to actionable agronomy report.</p>
+          </header>
+
+          <!-- Visual Track: 5 Empty 16:9 Wireframe Placeholders -->
+          <div class="workflow-visual-track" aria-label="Drone wireframe stage renders">
+            <div class="workflow-visual-placeholder">
+              <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled13_fe419f9b.jpg" data-srcset="/assets/aistudio/Untitled13_fe419f9b.jpg 1280w" sizes="(max-width: 860px) 280px, 18vw" alt="Stage 01: Boundary traced on the AgriPad tablet and grid flight planned" loading="lazy" decoding="async" width="1280" height="720" />
+            </div>
+            <div class="workflow-visual-placeholder">
+              <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled14_285f0cda.jpg" data-srcset="/assets/aistudio/Untitled14_285f0cda.jpg 1280w" sizes="(max-width: 860px) 280px, 18vw" alt="Stage 02: Multispectral, thermal, and RGB imagery capture" loading="lazy" decoding="async" width="1280" height="720" />
+            </div>
+            <div class="workflow-visual-placeholder">
+              <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled15_8193f721.jpg" data-srcset="/assets/aistudio/Untitled15_8193f721.jpg 1280w" sizes="(max-width: 860px) 280px, 18vw" alt="Stage 03: Processing unit scores crop health, moisture, and leak indicators" loading="lazy" decoding="async" width="1280" height="720" />
+            </div>
+            <div class="workflow-visual-placeholder">
+              <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled17_743e1887.jpg" data-srcset="/assets/aistudio/Untitled17_743e1887.jpg 1280w" sizes="(max-width: 860px) 280px, 18vw" alt="Stage 04: Automated irrigation and zone response actuation" loading="lazy" decoding="async" width="1280" height="720" />
+            </div>
+            <div class="workflow-visual-placeholder">
+              <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled16_39caf701.jpg" data-srcset="/assets/aistudio/Untitled16_39caf701.jpg 1280w" sizes="(max-width: 860px) 280px, 18vw" alt="Stage 05: Field report sent to the farmer's AgriPad tablet" loading="lazy" decoding="async" width="1280" height="720" />
+            </div>
+          </div>
+
+          <!-- The 5-Step Grid (With Mobile Horizontal Scroll-Snap) -->
+          <div class="workflow-timeline" role="list" aria-label="Automated Mission Workflow Steps">
+            <div class="workflow-step" role="listitem">
+              <div class="workflow-step__meta">
+                <span data-i18n="workflow.step1.num">STEP 01</span>
+                <span aria-hidden="true">—</span>
+                <span data-i18n="workflow.step1.label">PLAN</span>
+              </div>
+              <h3 class="workflow-step__title" data-i18n="workflow.step1.title">MAP</h3>
+              <p class="workflow-step__desc" data-i18n="workflow.step1.desc">Boundary traced on the tablet; grid flight planned.</p>
+            </div>
+
+            <div class="workflow-step" role="listitem">
+              <div class="workflow-step__meta">
+                <span data-i18n="workflow.step2.num">STEP 02</span>
+                <span aria-hidden="true">—</span>
+                <span data-i18n="workflow.step2.label">SENSE</span>
+              </div>
+              <h3 class="workflow-step__title" data-i18n="workflow.step2.title">CAPTURE</h3>
+              <p class="workflow-step__desc" data-i18n="workflow.step2.desc">Multispectral, thermal, and RGB imagery.</p>
+            </div>
+
+            <div class="workflow-step" role="listitem">
+              <div class="workflow-step__meta">
+                <span data-i18n="workflow.step3.num">STEP 03</span>
+                <span aria-hidden="true">—</span>
+                <span data-i18n="workflow.step3.label">COMPUTE</span>
+              </div>
+              <h3 class="workflow-step__title" data-i18n="workflow.step3.title">ANALYZE</h3>
+              <p class="workflow-step__desc" data-i18n="workflow.step3.desc">Processing unit scores crop health, moisture, and leak indicators.</p>
+            </div>
+
+            <div class="workflow-step" role="listitem">
+              <div class="workflow-step__meta">
+                <span data-i18n="workflow.step4.num">STEP 04</span>
+                <span aria-hidden="true">—</span>
+                <span data-i18n="workflow.step4.label">INSPECT</span>
+              </div>
+              <h3 class="workflow-step__title" data-i18n="workflow.step4.title">VERIFY</h3>
+              <p class="workflow-step__desc" data-i18n="workflow.step4.desc">Flagged spots get a low-altitude RGB pass for pest identification.</p>
+            </div>
+
+            <div class="workflow-step" role="listitem">
+              <div class="workflow-step__meta">
+                <span data-i18n="workflow.step5.num">STEP 05</span>
+                <span aria-hidden="true">—</span>
+                <span data-i18n="workflow.step5.label">DELIVER</span>
+              </div>
+              <h3 class="workflow-step__title" data-i18n="workflow.step5.title">REPORT</h3>
+              <p class="workflow-step__desc" data-i18n="workflow.step5.desc">Field report sent to the farmer's tablet.</p>
+            </div>
+          </div>
+
+          <!-- Manual Override Banner -->
+          <div class="workflow-note" role="note">
+            <span class="workflow-note__label" data-i18n="workflow.banner.label">MANUAL OVERRIDE PROTOCOL</span>
+            <p class="workflow-note__text" data-i18n="workflow.banner.text">Note: The farmer can switch to manual piloting from the tablet instead of the automated mission.</p>
+          </div>
+        </article>
+
+        <div class="station-section-divider"></div>
+
+        <!-- SECTION 5: Design & Ergonomics -->
+        <article class="project-card station-section-divider" id="ergonomics">
+          <div class="section-meta section-meta--sub">
+            <div>
+              <span>Index</span> &nbsp;—&nbsp; <strong>04 / DESIGN &amp; ERGONOMICS</strong>
+            </div>
+            <div>
+              <span>Form</span> &nbsp;—&nbsp; <strong>SURVEYING INSTRUMENT</strong>
+            </div>
+            <div>
+              <span>Thermal</span> &nbsp;—&nbsp; <strong>ANODIZED COOLING FINS</strong>
+            </div>
+            <div>
+              <span>Touchpoints</span> &nbsp;—&nbsp; <strong>SAFETY ORANGE</strong>
+            </div>
+          </div>
+
+          <div class="project-card__header">
+            <div>
+              <h2 class="project-card__title">Form &amp; Instrument Ergonomics</h2>
+              <div class="project-card__title-rule" aria-hidden="true"></div>
+              <p class="project-card__subtitle">Precision Hardware Architecture</p>
+              <div class="project-card__tags">Asymmetric study of aerodynamic geometry, sensor housing, and field-ready human factors</div>
+            </div>
+            <div class="project-card__tags">INDUSTRIAL DESIGN · MACRO STUDIES</div>
+          </div>
+
+          <div class="ergonomics-list">
+            <!-- Sub-section 1: Geometric Discipline -->
+            <div class="ergonomics-row">
+              <div class="ergonomics-copy">
+                <div class="ergonomics-copy__top">
+                  <span class="ergonomics-copy__index">01 / GEOMETRY &amp; AERODYNAMICS</span>
+                  <h3 class="ergonomics-copy__title">Design Language and Aerodynamic</h3>
+                  <p class="ergonomics-copy__body">Flat panels and sharp angle chamfers give it the look of a surveying instrument rather than a consumer drone. The upper shell is sculpted to shed downdraft and reflect field sunlight away from the battery bay.</p>
+                </div>
+                <div class="ergonomics-copy__tag">CHAMFERED MONOCOQUE · SOLAR DEFLECTION GEOMETRY</div>
+              </div>
+              <div class="macro-placeholder" style="padding: 0;">
+                <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled18_eeac22f0.jpg" data-srcset="/assets/aistudio/Untitled18_eeac22f0.jpg 1500w" sizes="(max-width: 1024px) 92vw, 55vw" alt="Design Language and Aerodynamic — sculpted upper shell and chamfered magnesium airframe" loading="lazy" decoding="async" width="1500" height="824" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              </div>
+            </div>
+
+            <!-- Sub-section 2: Payload & Handling -->
+            <div class="ergonomics-row">
+              <div class="ergonomics-copy">
+                <div class="ergonomics-copy__top">
+                  <span class="ergonomics-copy__index">02 / OPTICS &amp; THERMAL DISSIPATION</span>
+                  <h3 class="ergonomics-copy__title">Payload &amp; Handling</h3>
+                  <p class="ergonomics-copy__body">The belly payload shares the airframe's chamfered geometry and satin magnesium finish. It houses an RGB lens, four monochrome multispectral sensors, and a thermal infrared (LWIR) camera deeply inset behind coated glass. CNC-machined anodized cooling fins dissipate heat from onboard AI processing.</p>
+                </div>
+                <div class="ergonomics-copy__tag">RGB + 4× MULTISPECTRAL + LWIR · CNC COOLING FINS</div>
+              </div>
+              <div class="macro-placeholder" style="padding: 0;">
+                <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled20_f86e7c60.jpg" data-srcset="/assets/aistudio/Untitled20_f86e7c60.jpg 1500w" sizes="(max-width: 1024px) 92vw, 55vw" alt="Payload &amp; Handling — AgriVision field deployment with ground station and AgriPad tablet" loading="lazy" decoding="async" width="1500" height="824" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              </div>
+            </div>
+
+            <!-- Sub-section 3: Human Factors -->
+            <div class="ergonomics-row">
+              <div class="ergonomics-copy">
+                <div class="ergonomics-copy__top">
+                  <span class="ergonomics-copy__index">03 / LOW-LIGHT FIELD OPERATION</span>
+                  <h3 class="ergonomics-copy__title">Human Factors</h3>
+                  <p class="ergonomics-copy__body">Built for dawn, dusk, and dusty conditions. Safety orange is reserved strictly for human touchpoints: grab handles, cam latches, outrigger locks, and bungees.</p>
+                </div>
+                <div class="ergonomics-copy__tag">HIGH-VISIBILITY TOUCHPOINTS · DAWN &amp; DUSK ERGONOMICS</div>
+              </div>
+              <div class="macro-placeholder" style="padding: 0;">
+                <img class="mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled21_ffb5fedc.jpg" data-srcset="/assets/aistudio/Untitled21_ffb5fedc.jpg 1500w" sizes="(max-width: 1024px) 92vw, 55vw" alt="Human Factors — operator scale reference with open and stowed AgriHub ground stations and safety-orange touchpoints" loading="lazy" decoding="async" width="1500" height="824" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SECTION 6: Materiality (The 80/15/5 Rule) -->
+        <article class="project-card station-section-divider" id="materiality">
+          <div class="section-meta section-meta--sub">
+            <div>
+              <span>Index</span> &nbsp;—&nbsp; <strong>05 / MATERIALITY</strong>
+            </div>
+            <div>
+              <span>Distribution</span> &nbsp;—&nbsp; <strong>THE 80/15/5 RULE</strong>
+            </div>
+            <div>
+              <span>Finish</span> &nbsp;—&nbsp; <strong>FIELD DURABILITY</strong>
+            </div>
+            <div>
+              <span>Recognition</span> &nbsp;—&nbsp; <strong>HIGH-CONTRAST CMF</strong>
+            </div>
+          </div>
+
+          <div class="project-card__header">
+            <div>
+              <h2 class="project-card__title">Materiality: The 80/15/5 Rule</h2>
+              <div class="project-card__title-rule" aria-hidden="true"></div>
+              <p class="project-card__subtitle">Color, Material &amp; Finish Architecture</p>
+              <div class="project-card__tags">Engineered surface hierarchy balancing solar thermal management, impact resilience, and operator visibility</div>
+            </div>
+            <div class="project-card__tags">80% MAGNESIUM · 15% POLYMER · 5% TPU</div>
+          </div>
+
+          <p class="project-specs-intro">
+            Color, material, and finish chosen for field durability and instant recognition.
+          </p>
+
+          <!-- Visual 80/15/5 Proportion Bar -->
+          <div class="cmf-ratio-bar" aria-label="80/15/5 Material Distribution Ratio">
+            <div class="cmf-ratio-segment cmf-ratio-segment--80">
+              <div class="cmf-ratio-segment__fill"></div>
+              <span class="cmf-ratio-segment__caption">80% · Satin Magnesium Alloy (#D9D9D9)</span>
+            </div>
+            <div class="cmf-ratio-segment cmf-ratio-segment--15">
+              <div class="cmf-ratio-segment__fill"></div>
+              <span class="cmf-ratio-segment__caption">15% · Charcoal Polymer (#2A2A2A)</span>
+            </div>
+            <div class="cmf-ratio-segment cmf-ratio-segment--5">
+              <div class="cmf-ratio-segment__fill"></div>
+              <span class="cmf-ratio-segment__caption">5% · Safety TPU (#FF6600)</span>
+            </div>
+          </div>
+
+          <div class="cmf-grid">
+            <!-- Material 1 -->
+            <div class="cmf-card">
+              <div class="cmf-swatch cmf-swatch--magnesium">
+                <span>MAT 01</span>
+                <span>#D9D9D9</span>
+              </div>
+              <h3 class="cmf-card__title">Bead-blasted satin magnesium alloy (#D9D9D9)</h3>
+              <div class="cmf-card__meta">
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Application</span>
+                  <p class="cmf-card__val">Drone upper shell, station hood.</p>
+                </div>
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Rationale</span>
+                  <p class="cmf-card__val">Light and stiff; limits solar heat gain.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Material 2 -->
+            <div class="cmf-card">
+              <div class="cmf-swatch cmf-swatch--polymer">
+                <span>MAT 02</span>
+                <span>#2A2A2A</span>
+              </div>
+              <h3 class="cmf-card__title">Stippled high-impact charcoal polymer (#2A2A2A)</h3>
+              <div class="cmf-card__meta">
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Application</span>
+                  <p class="cmf-card__val">Lower station chassis, wheel wells, bumpers.</p>
+                </div>
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Rationale</span>
+                  <p class="cmf-card__val">Absorbs impacts and hides mud.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Material 3 -->
+            <div class="cmf-card">
+              <div class="cmf-swatch cmf-swatch--tpu">
+                <span>MAT 03</span>
+                <span>#FF6600</span>
+              </div>
+              <h3 class="cmf-card__title">Vulcanized safety-orange TPU elastomer (#FF6600)</h3>
+              <div class="cmf-card__meta">
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Application</span>
+                  <p class="cmf-card__val">Grab handles, cam latches, locks.</p>
+                </div>
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Rationale</span>
+                  <p class="cmf-card__val">Marks human touchpoints in low light and provides wet-grip traction.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Material 4 -->
+            <div class="cmf-card">
+              <div class="cmf-swatch cmf-swatch--steel">
+                <span>MAT 04</span>
+                <span>316 SS</span>
+              </div>
+              <h3 class="cmf-card__title">Raw brushed 316 stainless steel</h3>
+              <div class="cmf-card__meta">
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Application</span>
+                  <p class="cmf-card__val">Exposed load-bearing hardware.</p>
+                </div>
+                <div class="cmf-card__row">
+                  <span class="cmf-card__key">Rationale</span>
+                  <p class="cmf-card__val">No paint to flake on sliding joints; resists fertilizer corrosion.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SECTION 7: Technical Specifications & Impact -->
+        <article class="project-card station-section-divider" id="specifications">
+          <div class="section-meta section-meta--sub">
+            <div>
+              <span>Index</span> &nbsp;—&nbsp; <strong>06 / TECHNICAL SPECIFICATIONS</strong>
+            </div>
+            <div>
+              <span>Envelope</span> &nbsp;—&nbsp; <strong>FLIGHT &amp; STATION DATA</strong>
+            </div>
+            <div>
+              <span>Protection</span> &nbsp;—&nbsp; <strong>IP54 / IP67 FIELD RATED</strong>
+            </div>
+            <div>
+              <span>Impact</span> &nbsp;—&nbsp; <strong>PRECISION AGRONOMY</strong>
+            </div>
+          </div>
+
+          <div class="project-card__header">
+            <div>
+              <h2 class="project-card__title">Target Specifications</h2>
+              <div class="project-card__title-rule" aria-hidden="true"></div>
+              <p class="project-card__subtitle">System Performance Envelope</p>
+            </div>
+            <div class="project-card__tags">08 BENCHMARKS · FIELD RATED</div>
+          </div>
+
+          <div class="specs-split">
+            <div class="specs-split__left">
+              <p class="specs-split__intro">
+                Verified operational benchmarks across aerial endurance, optical payload, and autonomous ground power.
+              </p>
+
+              <div class="specs-ledger" role="table" aria-label="Target Specifications">
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">01 / Endurance</div>
+                  <div class="specs-ledger__value" role="cell">Up to 40 min</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">02 / Max Wind Resistance</div>
+                  <div class="specs-ledger__value" role="cell">12 m/s</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">03 / Survey Speed</div>
+                  <div class="specs-ledger__value" role="cell">Up to 6 m/s (autonomous grid)</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">04 / Coverage</div>
+                  <div class="specs-ledger__value" role="cell">Approx. 20 ha at 80m altitude and 6 m/s</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">05 / Operating Radius</div>
+                  <div class="specs-ledger__value" role="cell">Up to 500m from station</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">06 / Drone Payload</div>
+                  <div class="specs-ledger__value" role="cell">20 MP RGB + 4x 5MP multispectral + thermal infrared (LWIR)</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">07 / Station Power</div>
+                  <div class="specs-ledger__value" role="cell">2.4 kWh LiFePO4 bank, 4 fast drone swaps, 180W folding solar canopy</div>
+                </div>
+                <div class="specs-ledger__row" role="row">
+                  <div class="specs-ledger__label" role="rowheader">08 / Protection</div>
+                  <div class="specs-ledger__value" role="cell">Drone IP54 | Station closed IP67 | Station open splash-resistant</div>
+                </div>
+              </div>
+
+              <div class="impact-banner">
+                <span class="impact-banner__kicker">INTENDED IMPACT</span>
+                <p class="impact-banner__statement">
+                  A single report shows where in the field to look first, so problems are found before they spread. Lowering the barrier to precision agronomy: one operator, no fixed base, no pilot training.
+                </p>
+              </div>
+            </div>
+
+            <div class="specs-split__media" style="background-color: #ffa834; display: grid; grid-template-columns: 1fr 1fr; align-items: center;">
+              <img class="specs-split__img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled12_a95a67da.png" data-srcset="/assets/aistudio/Untitled12_a95a67da.png 4320w" sizes="(max-width: 1024px) 46vw, 20vw" alt="AgriVision Ground Station Technical Blueprint Illustration" loading="lazy" decoding="async" width="4320" height="4320">
+              <img class="specs-split__img mobile-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/assets/aistudio/Untitled10_c7dd0e6a.png" data-srcset="/assets/aistudio/Untitled10_c7dd0e6a.png 4320w" sizes="(max-width: 1024px) 46vw, 20vw" alt="AgriVision UAV Technical Blueprint Illustration" loading="lazy" decoding="async" width="4320" height="4320">
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div>
+          <span>© 2026 Atelier Unit</span> &nbsp;—&nbsp; <span>AGRIVISION Ecosystem</span>
+        </div>
+        <div>
+          <a href="#" aria-label="Back to Top">Back to Top ↑</a>
+        </div>
+      </footer>
+    </section>
+  </body>
+</html>
